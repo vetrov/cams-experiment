@@ -40,10 +40,12 @@
     <div id="floating-panel">
     <b>Start: </b>
     <select id="start">
+      <option value="Kivenlahti, Espoo, Finland">Kivenlahti, Espoo, Finland</option>
       <option value="Espoo, Finland">Espoo, Finland</option>
     </select>
     <b>End: </b>
     <select id="end">
+      <option value="Espoonlahti, Espoo, Finland">Espoonlahti, Espoo, Finland</option>
       <option value="Helsinki, Finland">Helsinki, Finland</option>
       <option value="Niirala, Finland">Niirala, Finland</option>
     </select>
@@ -86,14 +88,27 @@
           destination: document.getElementById('end').value,
           travelMode: 'DRIVING'
         }, function(response, status) {
-          console.log(response.routes[0].overview_path);
-          console.log(getPaths(response.routes[0].legs));
+          // console.log(response.routes[0].overview_path);
+          // console.log(getPaths(response.routes[0].legs));
+          response.routes[0].overview_path.reduce(function (prev, current) {
+            if (prev) {
+              calcPoints(prev.lat(), prev.lng(), current.lat(), current.lng());
+            }
+            return current;
+          }, null);
           if (status === 'OK') {
             directionsDisplay.setDirections(response);
           } else {
             window.alert('Directions request failed due to ' + status);
           }
         });
+      }
+
+      function calcPoints(x1, y1, x2, y2) {
+        var a = x2 - x1;
+        var b = y2 - y1;
+        var angle = Math.atan(b/a);
+        console.log(a, b, angle);
       }
 
       // flatten all the paths from all steps/legs to single array
@@ -106,6 +121,6 @@
         }, []);
       }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=KEY&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKD2rsxkZPbJyEOLSCvBRNFPobPgfHn9c&callback=initMap"></script>
   </body>
 </html>
